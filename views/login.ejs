@@ -1,0 +1,157 @@
+<%- include('partials/header'); -%>
+
+<form action="/login">
+  <h2>Login</h2>
+  <label for="email">Email</label>
+  <input type="text" name="email"  />
+  <div class="email error"></div>
+  <label for="password">Password</label>
+  <input type="password" name="password"  />
+  <input type="hidden" name="_csrf" value="${req.csrfToken()}">
+  <div class="g-recaptcha" data-sitekey="6LcwVRwoAAAAACl0Vac8ZkqY1VcE6BcRrEqhRxyc"></div>
+
+  <div class="password error"></div>
+  <button>login</button>
+</form>
+
+
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<!-- <script>
+  const form = document.querySelector('form');
+  const emailError = document.querySelector('.email.error');
+  const passwordError = document.querySelector('.password.error');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // reset errors
+    emailError.textContent = '';
+    passwordError.textContent = '';
+
+    // get values
+    const email = form.email.value;
+    const password = form.password.value;
+
+    try {
+      const res = await fetch('/login', { 
+        method: 'POST', 
+        body: JSON.stringify({ email, password }),
+        headers: {'Content-Type': 'application/json'}
+      });
+      const data = await res.json();
+      console.log(data);
+      if (data.errors) {
+        emailError.textContent = data.errors.email;
+        passwordError.textContent = data.errors.password;
+      }
+      if (data.user) {
+        location.assign('/');
+      }
+
+    }
+    catch (err) {
+      console.log(err);
+    }
+  });
+</script> -->
+
+<!-- <script>
+  const form = document.querySelector('form');
+  const emailError = document.querySelector('.email.error');
+  const passwordError = document.querySelector('.password.error');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // reset errors
+    emailError.textContent = '';
+    passwordError.textContent = '';
+
+    // get values
+    const email = form.email.value;
+    const password = form.password.value;
+    
+    // get reCAPTCHA response
+    const gRecaptchaResponse = grecaptcha.getResponse();
+
+    try {
+      const res = await fetch('/login', { 
+        method: 'POST', 
+        body: JSON.stringify({ email, password, 'g-recaptcha-response': gRecaptchaResponse }),
+        headers: {'Content-Type': 'application/json'}
+      });
+      const data = await res.json();
+      console.log(data);
+      if (data.errors) {
+        emailError.textContent = data.errors.email;
+        passwordError.textContent = data.errors.password;
+      }
+      if (data.user) {
+        location.assign('/');
+      }
+
+    }
+    catch (err) {
+      console.log(err);
+    }
+  });
+</script> -->
+<script>
+  // Fetch the CSRF token from the server
+  // const getCSRFToken = async () => {
+  //   const response = await fetch('/getCSRFToken');
+  //   const data = await response.json();
+  //   console.log(data.csrfToken);
+  //   let csrfToken = data.csrfToken;
+  // };
+
+  const form = document.querySelector('form');
+  const emailError = document.querySelector('.email.error');
+  const passwordError = document.querySelector('.password.error');
+  const csrfToken = document.querySelector('input[name="_csrf"]').value;
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // reset errors
+    emailError.textContent = '';
+    passwordError.textContent = '';
+
+    // get values
+    const email = form.email.value;
+    const password = form.password.value;
+    
+    // get reCAPTCHA response
+    const gRecaptchaResponse = grecaptcha.getResponse();
+
+    // get CSRF token
+    // const csrfToken = await getCSRFToken();
+
+    try {
+      const res = await fetch('/login', { 
+        method: 'POST', 
+        body: JSON.stringify({ email, password, 'g-recaptcha-response': gRecaptchaResponse ,'_csrf': csrfToken }),
+        // ,'_csrf': csrfToken 
+        headers: {'Content-Type': 'application/json'}
+      });
+      const data = await res.json();
+      console.log(data);
+      if (data.errors) {
+        emailError.textContent = data.errors.email;
+        passwordError.textContent = data.errors.password;
+      }
+      if (data.user) {
+        location.assign('/');
+        res.send(`<form action="/user-data" method="GET">
+   
+    <input type="hidden" name="_csrf" value="${req.csrfToken()}">
+    <button>get user data</button>
+  </form>`)
+      }
+
+    }
+    catch (err) {
+      console.log(err);
+    }
+  });
+</script>
+
